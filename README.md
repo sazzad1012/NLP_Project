@@ -1,8 +1,10 @@
 ## Building and Deploying a Spark ML Model on the Cloud
 ## Table of Contents  
----------------------
-[Introudction](#ab)  
-[Setting up instances on AWS](#emphasis)  
+
+* [Introudction](#ab)  
+* [Setting up instances on AWS](#ac) 
+  * [Setting up AWS](#ad)
+  * [Installing necessary software](#ae)
 
 <a name="ab"/>
 Introduction
