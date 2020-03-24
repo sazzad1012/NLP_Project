@@ -12,7 +12,9 @@
 
 This document describes the principal steps necessary for building a production grade deep learning model and deploy it on the cloud. Our focus is on the necessary hardware and software infrastructures for model deployment on the cloud, rather than finessing on building a perfect model. 
 
-The deep learning model is about inferring similarity between different texts, an example of which is comparing similarity between pairs of questions as in Quora question-pairs [[Kaggle](https://www.kaggle.com/c/quora-question-pairs)].  
+The deep learning model is about inferring textual similarity such as comparing similarity between pairs of sentences as in Quora question-pairs [[Kaggle](https://www.kaggle.com/c/quora-question-pairs)]. 
+
+The model utilizes [Apache Spark](https://spark.apache.org/) and the [Spark NLP](https://github.com/JohnSnowLabs/spark-nlp) for creating ML pipelines extracting festure vectors. Finally, Keras with Tensorflow as backend is used to build the model. 
 
 <a name ="ac"/>
 
