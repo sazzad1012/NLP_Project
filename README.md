@@ -20,9 +20,9 @@ The deep learning model is about inferring similarity between different texts, a
 
 <a name = "ad"/>
 
-### EC2 instance setting
+### - EC2 instance setting
  
 <a name ="ae"/>
 
-### Software installation
+### - Software installation
 
