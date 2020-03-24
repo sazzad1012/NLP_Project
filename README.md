@@ -18,9 +18,10 @@ The deep learning model is about inferring similarity between different texts, a
 
 ## Setting up instances on AWS
 
+<a name = "ad"/>
 
-EC2 instance srtting
---------------------
+ ## EC2 instance srtting
+ ------------------
 
 Software installation
 ---------------------
