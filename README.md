@@ -15,7 +15,8 @@ This document describes the principal steps necessary for building a production 
 The deep learning model is about inferring similarity between different texts, an example of which is comparing similarity between pairs of questions as in Quora question-pairs.  
 
 <a name ="ac"/>
-Setting up instances on AWS
+
+## Setting up instances on AWS
 
 
 EC2 instance srtting
