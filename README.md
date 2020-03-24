@@ -1,7 +1,7 @@
-# NLP_Project
+## Building and deploying a Spark ML model on the cloud
 ## Table of Contents  
-[Headers](#headers)  
-[Emphasis](#emphasis)  
-...snip...
+[Introudction](#headers)  
+[Setting up instances on AWS](#emphasis)  
+
 <a name="headers"/>
-## Headers
+## Introduction
