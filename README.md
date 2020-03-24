@@ -3,7 +3,7 @@
 
 * [Introudction](#ab)  
 * [Setting up instances on AWS](#ac) 
-  * [EC2 instrance setting](#ad)
+  * [EC2 instance setting](#ad)
   * [Software installation](#ae)
 
 <a name = "ab"/>
@@ -20,7 +20,7 @@ The deep learning model is about inferring similarity between different texts, a
 
 <a name = "ad"/>
 
- ## EC2 instance srtting
+ ## *EC2 instance srtting
  ------------------
 
 Software installation
