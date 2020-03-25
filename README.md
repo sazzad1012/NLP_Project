@@ -2,8 +2,8 @@
 ## Table of Contents  
 
 * [Introudction](#ab)  
-* [Setting up instances on AWS](#ac) 
-  * [EC2 instance setting](#ad)
+* [Computing resources on AWS](#ac) 
+  * [EC2 instance](#ad)
   * [Software installation](#ae)
 
 <a name = "ab"/>
@@ -18,7 +18,9 @@ The model utilizes [Apache Spark](https://spark.apache.org/) for handling big-da
 
 <a name ="ac"/>
 
-## Setting up instances on AWS
+## Computing resources on AWS
+
+The first step is provisoning for adequate cloud computing reosurces, for which an excellent choice is [AWS](https://aws.amazon.com/). Amazon Elastic Compute Cloud (Amazon EC2) provides secure, resizable compute capacity in the cloud. We created two linux-based (Ubuntu 18.04) EC2 instances follwoing the excellent [documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html#ec2-launch-instance). 
 
 <a name = "ad"/>
 
