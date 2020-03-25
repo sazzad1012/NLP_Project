@@ -37,5 +37,5 @@ sudo chown -R ubuntu $SPARK_HOME
 Once ```Spark (PySpark)``` is properly installed, [Spark NLP 2.4.0]((https://github.com/JohnSnowLabs/spark-nlp)) needs to be installed using ```pip```- the ```Python``` package installer. 
 
 #### --Intsalling Python packages
-Fionally, we need to install ```Keras``` and ```TensorFlow``` [4](https://www.pyimagesearch.com/2019/01/30/ubuntu-18-04-install-tensorflow-and-keras-for-deep-learning/) along with ```Python``` packages for ```NLTK```, ```NumPy```, and ```Pandas```. 
+Fionally, we need to install ```Keras``` and ```TensorFlow```([4](https://www.pyimagesearch.com/2019/01/30/ubuntu-18-04-install-tensorflow-and-keras-for-deep-learning/)) along with ```Python``` packages for ```NLTK```, ```NumPy```, and ```Pandas```. 
 
