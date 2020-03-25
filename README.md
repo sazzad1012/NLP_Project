@@ -8,7 +8,6 @@
 <a name = "ab"/>
 
 ## Introduction
-
 This document describes the principal steps necessary for building a production grade deep learning model and deploy it on the cloud, [Amazon Web Services](https://aws.amazon.com/). Our focus is on the necessary hardware and software infrastructures for model deployment on the cloud, rather than finessing on building a perfect model. 
 
 The deep learning model is about inferring textual similarity such as comparing similarity between pairs of sentences as in Quora question-pairs [[Kaggle](https://www.kaggle.com/c/quora-question-pairs)]. 
@@ -23,5 +22,7 @@ The first step is provisoning for adequate cloud computing reosurces, for which 
 <a name ="ae"/>
 
 ### - Software installation
-####     - Spark installation
+First, we need to install Spark on each EC2 instance. Then, we will install the other spackages as described below.
+####     * Spark installation
+
 
