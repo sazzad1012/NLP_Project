@@ -34,5 +34,8 @@ export PYSPARK_PYTHON=python3
 
 sudo chown -R ubuntu $SPARK_HOME
 ```
+Once ``Spark (PySpark)``
+
+#### --Intsalling Python packages and Spark-NLP
 
 
