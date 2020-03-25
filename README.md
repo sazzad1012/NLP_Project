@@ -21,8 +21,8 @@ The first step is provisoning for adequate cloud computing reosurces, for which 
  
 <a name ="ae"/>
 
-### - Software installation
+### -Software installation
 First, we need to install Spark on each EC2 instance. Then, we will install the other spackages as described below.
-####     * Spark installation
+#### --Spark installation
 
 
