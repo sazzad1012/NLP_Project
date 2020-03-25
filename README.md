@@ -25,7 +25,7 @@ The first step is provisoning for adequate cloud computing reosurces, for which 
 
 ### -Software installation
 First, we need to install Spark on each EC2 instance. Then, we will install the other spackages as described below.
-#### --Spark installation
+#### --Installation of Spark and Spark-NLP
 There are excellent online resources for installing Spoark on EC2 instances ([1](https://github.com/tkachuksergiy/aws-spark-nlp), [2](https://computingforgeeks.com/how-to-install-apache-spark-on-ubuntu-debian/), [3](https://blog.insightdatascience.com/simply-install-spark-cluster-mode-341843a52b88)). This requires installing ```Java```, downloading ```Spark 2.4.4```, settingup the master and the slave node. In our case, there is one master and one slave node, since we chose to have two E2 instances. One crucial step is updating the ```.bashrc``` configuration file:
 
 ```bash
@@ -38,7 +38,7 @@ sudo chown -R ubuntu $SPARK_HOME
 ```
 Once ```Spark (PySpark)``` is properly installed, [Spark NLP 2.4.0]((https://github.com/JohnSnowLabs/spark-nlp)) needs to be installed using ```pip```- the ```Python``` package installer. 
 
-#### --Intsalling Python packages
+#### --Intsallation of Python packages
 Finally, we need to install ```Keras``` and ```TensorFlow```([4](https://www.pyimagesearch.com/2019/01/30/ubuntu-18-04-install-tensorflow-and-keras-for-deep-learning/)) along with ```Python``` packages such as ```NLTK```, ```NumPy```, and ```Pandas```. 
 
 <a name = "af"/>
