@@ -24,4 +24,5 @@ The first step is provisoning for adequate cloud computing reosurces, for which 
 <a name ="ae"/>
 
 ### - Software installation
+####     - Spark installation
 
