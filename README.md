@@ -34,7 +34,7 @@ export PYSPARK_PYTHON=python3
 
 sudo chown -R ubuntu $SPARK_HOME
 ```
-Once ```Spark (PySpark)``` is properly installed, [```Spark NLP 2.4.0```]((https://github.com/JohnSnowLabs/spark-nlp)) needs to be installed using ```pip```- the Python package installer. 
+Once ```Spark (PySpark)``` is properly installed, ```[Spark NLP 2.4.0]((https://github.com/JohnSnowLabs/spark-nlp))``` needs to be installed using ```pip```- the Python package installer. 
 
 #### --Intsalling Python packages and Spark-NLP
 
