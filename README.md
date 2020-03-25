@@ -20,7 +20,7 @@ The model utilizes [Apache Spark](https://spark.apache.org/) for handling big-da
 
 ## Computing resources on AWS
 
-The first step is provisoning for adequate cloud computing reosurces, for which an excellent choice is [AWS](https://aws.amazon.com/). Amazon Elastic Compute Cloud (**[Amazon EC2]**)(https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Instances.html) provides secure, resizable compute capacity in the cloud. We created two linux-based (**Ubuntu 18.04**) EC2 instances following the excellent [documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html#ec2-launch-instance). We also used ``p3.2xlarge`` that has 1 GPU and 32 vCPU.  
+The first step is provisoning for adequate cloud computing reosurces, for which an excellent choice is [AWS](https://aws.amazon.com/). Amazon Elastic Compute Cloud, [**Amazon EC2**](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Instances.html), provides secure, resizable compute capacity in the cloud. We created two linux-based (**Ubuntu 18.04**) EC2 instances following the excellent [documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html#ec2-launch-instance). We also used ``p3.2xlarge`` that has 1 GPU and 32 vCPU.  
  
 <a name = "ad"/>
 
