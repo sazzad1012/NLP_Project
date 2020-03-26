@@ -140,6 +140,10 @@ def feature_extract(train_t):
     return tA_array, tB_array
     ```
 deep learning model
+
+An schematic of the model is:
+![Image1](https://octodex.github.com/images/yaktocat.png)
+
 ```python
 lstm = layers.LSTM(n_hidden, unit_forget_bias=True, kernel_initializer='he_normal',\
                             kernel_regularizer='l2', name='lstm_layer')
@@ -191,3 +195,4 @@ def form_example():
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8000)
 ```
+
