@@ -44,3 +44,15 @@ Finally, we need to install ```Keras``` and ```TensorFlow```([4](https://www.pyi
 <a name = "af"/>
 
 ## Deep learning model
+
+```python
+spark = SparkSession.builder \
+ .master('local[4]') \
+ .appName('Spark NLP') \
+ .config('spark.driver.memory', '12g') \
+ .config('spark.executor.memory', '12g') \
+ .config('spark.jars.packages', 'JohnSnowLabs:spark-nlp:2.4.0') \
+ .getOrCreate()
+
+```
+
