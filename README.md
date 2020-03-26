@@ -103,6 +103,8 @@ def build_data(df):
     return processed1, label_array1
 ```
 
+Then extracting the features:
+<div class="text-white bg-gray-dark mb-2">
 ```python
 def feature_extract(train_t):
     stopWords = spark_ft.StopWordsRemover.loadDefaultStopWords('english')
