@@ -139,3 +139,26 @@ def feature_extract(train_t):
 
     return tA_array, tB_array
     ```
+deep learning model
+```python
+lstm = layers.LSTM(n_hidden, unit_forget_bias=True, kernel_initializer='he_normal',\
+                            kernel_regularizer='l2', name='lstm_layer')
+left_input = Input(shape=(None, input_dim), name='input_1')
+left_output = lstm(left_input)
+right_input = Input(shape=(None, input_dim), name='input_2')
+right_output = lstm(right_input)
+l1_norm = lambda x: 1 - K.abs(x[0] - x[1])
+merged = layers.Lambda(function=l1_norm, output_shape=lambda x: x[0], \
+                                  name='L1_distance')([left_output, right_output])
+#predictions = layers.Dense(1, activation='sigmoid', name='Similarity_layer')(merged)
+predictions = layers.Dense(1, activation='relu', name='Similarity_layer')(merged)
+model = Model([left_input, right_input], predictions)
+
+optimizer = Adadelta()
+#optimizer = Adadelta(learning_rate=1.05, rho=0.85)
+#optimizer = Adam(lr=0.001)
+model.compile(loss = 'mse', optimizer = optimizer, metrics=['accuracy'])
+#model.compile(loss = tf.keras.losses.BinaryCrossentropy(), optimizer = optimizer, metrics=['accuracy'])
+history = model.fit([train_qA, train_qB], train_scores, batch_size=64, nb_epoch=15, validation_data=([val_qA, val_qB], val_scores))
+#model.save('/home/ubuntu/ML_NLP/test_result1.h5')
+```
