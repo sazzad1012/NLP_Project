@@ -144,6 +144,7 @@ deep learning model
 An schematic of the model is:
 ![Image1](https://github.com/sazzad1012/NLP_Project/blob/master/test.003.png)
 
+
 ```python
 lstm = layers.LSTM(n_hidden, unit_forget_bias=True, kernel_initializer='he_normal',\
                             kernel_regularizer='l2', name='lstm_layer')
