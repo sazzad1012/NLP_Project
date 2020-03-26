@@ -142,7 +142,7 @@ def feature_extract(train_t):
 deep learning model
 
 An schematic of the model is:
-![Image1](https://github.com/sazzad1012/NLP_Project/blob/master/test.003.png)
+![Image1](https://github.com/sazzad1012/NLP_Project/blob/master/BiLSTM.png)
 
 
 ```python
