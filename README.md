@@ -56,7 +56,7 @@ spark = SparkSession.builder \
 ```
 
 Then read the data file and split it into two dataframes for tarining and validation:
-.bg-gray0dark
+
 ```python
 sql = SQLContext(spark)
 dfgiven = sql.read.csv(f'{train_dir}{file_name}', header=True, inferSchema=True, escape = '\"')
@@ -142,7 +142,7 @@ def feature_extract(train_t):
 deep learning model
 
 An schematic of the model is:
-![Image1]<img src="https://github.com/sazzad1012/NLP_Project/blob/master/test.002.png" width = "32" height="32")
+![Image1](<img src="https://github.com/sazzad1012/NLP_Project/blob/master/test.002.png" width = "32" height="32">)
 
 ```python
 lstm = layers.LSTM(n_hidden, unit_forget_bias=True, kernel_initializer='he_normal',\
