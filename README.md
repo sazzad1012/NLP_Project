@@ -56,6 +56,7 @@ spark = SparkSession.builder \
 ```
 
 Then read the data file and split it into two dataframes for tarining and validation:
+.bg-gray0dark
 ```python
 sql = SQLContext(spark)
 dfgiven = sql.read.csv(f'{train_dir}{file_name}', header=True, inferSchema=True, escape = '\"')
