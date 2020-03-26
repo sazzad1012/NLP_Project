@@ -53,6 +53,86 @@ spark = SparkSession.builder \
  .config('spark.executor.memory', '12g') \
  .config('spark.jars.packages', 'JohnSnowLabs:spark-nlp:2.4.0') \
  .getOrCreate()
-
 ```
 
+Then read the data file and split it into two dataframes for tarining and validation:
+```python
+sql = SQLContext(spark)
+dfgiven = sql.read.csv(f'{train_dir}{file_name}', header=True, inferSchema=True, escape = '\"')
+df1,df2 = dfgiven.randomSplit([0.50, 0.50],seed=1234)
+```
+
+Then write a helper function creating a dartapipeline for feature extraction.
+```pyton
+def build_data(df):
+    document_assembler1 = DocumentAssembler() \
+        .setInputCol('question1').setOutputCol('document1')
+
+    tokenizer1 = Tokenizer() \
+        .setInputCols(['document1']) \
+        .setOutputCol('token1')
+
+    finisher1 = Finisher() \
+        .setInputCols(['token1']) \
+        .setOutputCols(['ntokens1']) \
+        .setOutputAsArray(True) \
+        .setCleanAnnotations(True)
+
+    document_assembler2 = DocumentAssembler() \
+        .setInputCol('question2').setOutputCol('document2')
+
+    tokenizer2 = Tokenizer() \
+        .setInputCols(['document2']) \
+        .setOutputCol('token2')
+
+    finisher2 = Finisher() \
+        .setInputCols(['token2']) \
+        .setOutputCols(['ntokens2']) \
+        .setOutputAsArray(True) \
+        .setCleanAnnotations(True)
+
+    p_pipeline = Pipeline(stages=[document_assembler1, tokenizer1, finisher1, \
+                                  document_assembler2, tokenizer2, finisher2])
+    p_model = p_pipeline.fit(df)
+    processed1 = p_model.transform(df)
+    label1 = processed1.select('is_duplicate').collect()
+    label_array1 = np.array(label1)
+    label_array1 = label_array1.astype(np.int)
+
+    return processed1, label_array1
+```
+
+```python
+def feature_extract(train_t):
+    stopWords = spark_ft.StopWordsRemover.loadDefaultStopWords('english')
+
+    sw_remover1 = spark_ft.StopWordsRemover(inputCol='ntokens1', outputCol='clean_tokens1', stopWords=stopWords)
+
+    text2vec1 = spark_ft.Word2Vec(
+        vectorSize=50, minCount=1, seed=123,
+        inputCol='ntokens1', outputCol='text_vec1',
+        windowSize=1, maxSentenceLength=100)
+
+    assembler1 = spark_ft.VectorAssembler(inputCols=['text_vec1'], outputCol='features1')
+
+    sw_remover2 = spark_ft.StopWordsRemover(inputCol='ntokens2', outputCol='clean_tokens2', stopWords=stopWords)
+
+    text2vec2 = spark_ft.Word2Vec(
+        vectorSize=50, minCount=1, seed=123,
+        inputCol='ntokens2', outputCol='text_vec2',
+        windowSize=1, maxSentenceLength=100)
+
+    assembler2 = spark_ft.VectorAssembler(inputCols=['text_vec2'], outputCol='features2')
+
+    feature_pipeline = Pipeline(stages=[sw_remover1, text2vec1, assembler1, sw_remover2, text2vec2, assembler2])
+
+    feature_model = feature_pipeline.fit(train_t)
+
+    train_featurized = feature_model.transform(train_t).persist()
+    tA = train_featurized.select('text_vec1').collect()
+    tA_array = np.array(tA)
+    tB = train_featurized.select('text_vec2').collect()
+    tB_array = np.array(tB)
+
+    return tA_array, tB_array
+    ```
