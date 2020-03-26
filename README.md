@@ -162,3 +162,32 @@ model.compile(loss = 'mse', optimizer = optimizer, metrics=['accuracy'])
 history = model.fit([train_qA, train_qB], train_scores, batch_size=64, nb_epoch=15, validation_data=([val_qA, val_qB], val_scores))
 #model.save('/home/ubuntu/ML_NLP/test_result1.h5')
 ```
+
+```python
+app = Flask(__name__)
+@app.route('/')
+@app.route('/form-example', methods=['GET', 'POST']) #allow both GET and POST requests
+def form_example():
+    if request.method == 'POST':  #this block is only entered when the form is submitted
+        texta = request.form.get('texta')
+        textb = request.form['textb']
+
+        test_list = [(texta, textb)]
+        dfgiven = sql.createDataFrame(test_list, ['question1', 'question2'])
+        test = build_data(dfgiven)
+        test_qA, test_qB = feature_extract(test)
+        new_prediction = new_model.predict([test_qA,test_qB])
+        return jsonify(str(new_prediction))
+#        return '''<h1>The language value is: {}</h1>'''.format(texta)
+#                  <h1>The framework value is: {}</h1>'''.format(texta, textb)
+
+    return '''<form method="POST">
+                  Question1: <input type="text" name="texta"><br>
+                  Question2: <input type="text" name="textb"><br>
+                  <input type="submit" value="Submit"><br>
+              </form>'''
+
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=8000)
+```
