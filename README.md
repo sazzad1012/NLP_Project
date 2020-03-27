@@ -126,25 +126,23 @@ The model is deployed with a ```Flask``` web application that interfaces with ``
 
 ![Image2](https://github.com/sazzad1012/NLP_Project/blob/master/FlaskS.png)
 
-Here, ```Gunicorn``` is a ```Python``` based ```WSGI http``` server that interfaces between ```Flask``` and ```Nginx.``` We followed two excellent tutorials [4](https://medium.com/hackernoon/a-guide-to-scaling-machine-learning-models-in-production-aa8831163846) and [5](https://www.jashds.com/blog/host-your-deep-learning-model-on-aws-free).
-```python
+Here, ```Gunicorn``` is a ```Python``` based ```WSGI http``` server that interfaces between ```Flask``` and ```Nginx.``` We followed two excellent tutorials [4](https://medium.com/hackernoon/a-guide-to-scaling-machine-learning-models-in-production-aa8831163846) and [5](https://www.jashds.com/blog/host-your-deep-learning-model-on-aws-free). After downloading and setting up ```Nginx``` and ```Gunicorn```, a ```Flask``` application is writtent. Finally, the ```systemmd``` service needs to be properly configured to ensure smooth running of the web application.
 
+Below is the ```Flask``` application: 
+```python
 app = Flask(__name__)
 @app.route('/')
-@app.route('/form-example', methods=['GET', 'POST']) #allow both GET and POST requests
+@app.route('/form-example', methods=['GET', 'POST']) 
 def form_example():
-    if request.method == 'POST':  #this block is only entered when the form is submitted
+    if request.method == 'POST': 
         texta = request.form.get('texta')
         textb = request.form['textb']
-
         test_list = [(texta, textb)]
         dfgiven = sql.createDataFrame(test_list, ['question1', 'question2'])
         test = build_data(dfgiven)
         test_qA, test_qB = feature_extract(test)
         new_prediction = new_model.predict([test_qA,test_qB])
         return jsonify(str(new_prediction))
-#        return '''<h1>The language value is: {}</h1>'''.format(texta)
-#                  <h1>The framework value is: {}</h1>'''.format(texta, textb)
 
     return '''<form method="POST">
                   Question1: <input type="text" name="texta"><br>
@@ -152,8 +150,6 @@ def form_example():
                   <input type="submit" value="Submit"><br>
               </form>'''
 
-
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8000)
-```
 ```
