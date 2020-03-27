@@ -1,14 +1,14 @@
 # Building and Deploying a Spark ML Model on the Cloud
 ## Table of Contents  
 
-* [1. Introudction](#ab)  
-* [2. Computing resources on AWS](#ac) 
+* [Introudction](#ab)  
+* [Computing resources on AWS](#ac) 
   * [Software installation](#ae)
-* [3. Deep learning model](#af)
+* [Deep learning model](#af)
   * [Model pipeline](#ag)
   * [Keras model](#ah)
-* [4, Deployment](#ai)
-* [5. Conclusion](#aj)
+* [Deployment](#ai)
+* [Conclusion](#aj)
 
 <a name = "ab"/>
 
@@ -124,6 +124,7 @@ The model is then serialized and saved as a ```hdf``` file.
 ## 4. Deployment
 The model is deployed with a ```Flask``` web application that interfaces with ```Nginx``` web-server. The technology stack is depicted as follows:
 
+![Image2](https://github.com/sazzad1012/NLP_Project/blob/master/FlaskS.png)
 
 
 ```python
