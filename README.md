@@ -126,7 +126,7 @@ The model is deployed with a ```Flask``` web application that interfaces with ``
 
 ![Image2](https://github.com/sazzad1012/NLP_Project/blob/master/FlaskS.png)
 
-
+Here, ```Gunicorn``` is a ```Python``` based ```WSGI http``` server that interfaces between ```Flask``` and ```Nginx.``` We followed two excellent tutorials [4](https://medium.com/hackernoon/a-guide-to-scaling-machine-learning-models-in-production-aa8831163846) and [5](https://www.jashds.com/blog/host-your-deep-learning-model-on-aws-free).
 ```python
 
 app = Flask(__name__)
