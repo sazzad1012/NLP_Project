@@ -10,7 +10,6 @@
 * [Deployment](#ai)
 * [Conclusion](#aj)
 
-
 <a name = "ab"/>
 
 ## Introduction
@@ -19,12 +18,10 @@ This document describes the principal steps necessary for building a deep learni
 The deep learning model is about inferring textual similarity such as comparing sentences as in Quora question-pairs [[Kaggle](https://www.kaggle.com/c/quora-question-pairs)]. 
 
 The model utilizes [Apache Spark](https://spark.apache.org/) for handling big-data and [Spark-NLP](https://github.com/JohnSnowLabs/spark-nlp) developed by [John Snow Labs](https://www.johnsnowlabs.com/) for creating the ML pipelines in order to extract the feature vectors. Finally, [Keras](https://keras.io/) with [TensorFlow](https://www.tensorflow.org/) as backend is used for building the model. 
-
 <a name ="ac"/>
 
 ## Computing resources on AWS
 The first step is provisoning for adequate cloud computing reosurces, for which our choice is [AWS](https://aws.amazon.com/). Amazon Elastic Compute Cloud, [**Amazon EC2**](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Instances.html), provides secure, resizable compute capacity in the cloud. We created two linux-based ``Ubuntu 18.04`` EC2 instances following the excellent [documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html#ec2-launch-instance). We used ``t3.2xlarge`` that has ``8 vCPU``, ``64GB`` memeory with ``120GB`` storage capacity.  
- 
 <a name ="ae"/>
 
 ### -Software installation
@@ -34,13 +31,11 @@ After, intsalling the necessary softwares, we used ```PyCharm``` profeesional ed
 
 #### --Installation of Spark and Spark-NLP
 There are well-documented online resources for installing ```Spark``` on EC2 instances ([1](https://github.com/tkachuksergiy/aws-spark-nlp), [2](https://computingforgeeks.com/how-to-install-apache-spark-on-ubuntu-debian/), [3](https://blog.insightdatascience.com/simply-install-spark-cluster-mode-341843a52b88)). The basic step requires installing ```Java```, downloading ```Spark 2.4.4```, and setting-up the master and the slave node. In our case, there is one master and one slave node, since we chose to have two EC2 instances. One crucial step is updating the ```.bashrc``` configuration file:
-
 ```bash
 export SPARK_HOME=/usr/local/spark-2.3.2-bin-hadoop2.7
 export PATH=$PATH:$SPARK_HOME/bin
 export PYSPARK_PYTHON=python3
 ```
-
 Once ```Spark (PySpark)``` is properly installed, [Spark NLP 2.4.0]((https://github.com/JohnSnowLabs/spark-nlp)) needs to be installed using ```pip```- the ```Python``` package installer. 
 
 #### --Intsallation of Python packages
@@ -50,7 +45,6 @@ Lastly, we need to install ```Keras``` and ```TensorFlow```([4](https://www.pyim
 
 ## Deep learning model
 The NLP deep learning model for comapring question-pairs has two components. The first is about data-pipelining with feature extraction. The features after approproiate vectorization are fed into LSTM model the output of which are then used for model evaluation. The ```Spark``` nodes are appropriately set (in the example below the master node is set to local)to read the data-file:
-
 ```python
 spark = SparkSession.builder \
  .master('local[4]') \
@@ -60,15 +54,12 @@ spark = SparkSession.builder \
  .config('spark.jars.packages', 'JohnSnowLabs:spark-nlp:2.4.0') \
  .getOrCreate()
 ```
-
 Then, the dataframe, after reading the data file, is split into two dataframes for tarining and validation:
-
 ```python
 sql = SQLContext(spark)
 dfgiven = sql.read.csv(f'{train_dir}{file_name}', header=True, inferSchema=True, escape = '\"')
 df1,df2 = dfgiven.randomSplit([0.50, 0.50],seed=1234)
 ```
-
 <a name ="ag"/>
 
 ### -Model pipeline
