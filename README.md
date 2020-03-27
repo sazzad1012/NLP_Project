@@ -40,7 +40,6 @@ Once ```Spark (PySpark)``` is properly installed, [Spark NLP 2.4.0]((https://git
 
 #### --Intsallation of Python packages
 Lastly, we need to install ```Keras``` and ```TensorFlow```([4](https://www.pyimagesearch.com/2019/01/30/ubuntu-18-04-install-tensorflow-and-keras-for-deep-learning/)) along with ```Python``` packages for natural language processing, qunatittaive data analyses and plotting such as ```NLTK```, ```NumPy```, ```Pandas```, ```Seaborn```. 
-
 <a name = "af"/>
 
 ## Deep learning model
@@ -64,8 +63,7 @@ df1,df2 = dfgiven.randomSplit([0.50, 0.50],seed=1234)
 
 ### -Model pipeline
 
-A helper function makes it easy for creating the data pipeline and extracting the features. First, the questions are tokenized and assembeld into a pipleine using Spark-NLP (see ```xxx.py```: 
-
+A helper function makes it easy for creating the data pipeline and extracting the features. First, the questions are tokenized and assembeld into a pipleine using Spark-NLP (see ```xxx.py```): 
 ```pyton
 def build_data(df):
     document_assembler1 = DocumentAssembler() \
@@ -78,49 +76,27 @@ def build_data(df):
         .setOutputCols(['ntokens1']) \
         .setOutputAsArray(True) \
         .setCleanAnnotations(True)
-.......
-.......
+    .......
     p_pipeline = Pipeline(stages=[document_assembler1, tokenizer1, finisher1, \
                                   document_assembler2, tokenizer2, finisher2])
     return ...
 ```
-Then extracting the features:
-<div class="text-white bg-gray-dark mb-2">
+For extracting the features, first stop-words are removed and then the word-tokens are converted into feature vectors using [Word2Vec](https://papers.nips.cc/paper/5021-distributed-representations-of-words-and-phrases-and-their-compositionality.pdf) as implemented in ```Spark NLP```:
 ```python
 def feature_extract(train_t):
     stopWords = spark_ft.StopWordsRemover.loadDefaultStopWords('english')
-
     sw_remover1 = spark_ft.StopWordsRemover(inputCol='ntokens1', outputCol='clean_tokens1', stopWords=stopWords)
-
     text2vec1 = spark_ft.Word2Vec(
         vectorSize=50, minCount=1, seed=123,
         inputCol='ntokens1', outputCol='text_vec1',
         windowSize=1, maxSentenceLength=100)
-
     assembler1 = spark_ft.VectorAssembler(inputCols=['text_vec1'], outputCol='features1')
-
-    sw_remover2 = spark_ft.StopWordsRemover(inputCol='ntokens2', outputCol='clean_tokens2', stopWords=stopWords)
-
-    text2vec2 = spark_ft.Word2Vec(
-        vectorSize=50, minCount=1, seed=123,
-        inputCol='ntokens2', outputCol='text_vec2',
-        windowSize=1, maxSentenceLength=100)
-
-    assembler2 = spark_ft.VectorAssembler(inputCols=['text_vec2'], outputCol='features2')
-
+    ......
     feature_pipeline = Pipeline(stages=[sw_remover1, text2vec1, assembler1, sw_remover2, text2vec2, assembler2])
-
     feature_model = feature_pipeline.fit(train_t)
-
-    train_featurized = feature_model.transform(train_t).persist()
-    tA = train_featurized.select('text_vec1').collect()
-    tA_array = np.array(tA)
-    tB = train_featurized.select('text_vec2').collect()
-    tB_array = np.array(tB)
-
-    return tA_array, tB_array
-    ```
-deep learning model
+    ......
+    return .... 
+```
 
 An schematic of the model is:
 ![Image1](https://github.com/sazzad1012/NLP_Project/blob/master/Blstm.png)
