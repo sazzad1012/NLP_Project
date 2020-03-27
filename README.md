@@ -43,7 +43,7 @@ Lastly, we need to install ```Keras``` and ```TensorFlow```([4](https://www.pyim
 <a name = "af"/>
 
 ## Deep learning model
-The NLP deep learning model for comapring question-pairs has two components. The first is about data-pipelining with feature extraction. The features after approproiate vectorization are fed into LSTM model the output of which are then used for model evaluation. The ```Spark``` nodes are appropriately set (in the example below the master node is set to local)to read the data-file:
+The NLP deep learning model for comapring question-pairs has two components. The first is about data-pipelining with feature extraction. The features after approproiate vectorization are fed into a LSTM model the output of which are then used for model evaluation. The ```Spark``` nodes are appropriately set (in the example below the master node is set to local) to read the data-file:
 ```python
 spark = SparkSession.builder \
  .master('local[4]') \
@@ -53,7 +53,7 @@ spark = SparkSession.builder \
  .config('spark.jars.packages', 'JohnSnowLabs:spark-nlp:2.4.0') \
  .getOrCreate()
 ```
-Then, the dataframe, after reading the data file, is split into two dataframes for tarining and validation:
+Then, the dataframe, after being read the data file, is split into two dataframes for tarining and validation:
 ```python
 sql = SQLContext(spark)
 dfgiven = sql.read.csv(f'{train_dir}{file_name}', header=True, inferSchema=True, escape = '\"')
@@ -62,7 +62,6 @@ df1,df2 = dfgiven.randomSplit([0.50, 0.50],seed=1234)
 <a name ="ag"/>
 
 ### -Model pipeline
-
 A helper function makes it easy for creating the data pipeline and extracting the features. First, the questions are tokenized and assembeld into a pipleine using Spark-NLP (see ```xxx.py```): 
 ```pyton
 def build_data(df):
@@ -81,7 +80,7 @@ def build_data(df):
                                   document_assembler2, tokenizer2, finisher2])
     return ...
 ```
-For extracting the features, first stop-words are removed and then the word-tokens are converted into feature vectors using [Word2Vec](https://papers.nips.cc/paper/5021-distributed-representations-of-words-and-phrases-and-their-compositionality.pdf) as implemented in ```Spark NLP```:
+For extracting the features, first stop-words are removed and then the word-tokens are converted into feature vectors (see ```yyy.py```)  using [Word2Vec](https://papers.nips.cc/paper/5021-distributed-representations-of-words-and-phrases-and-their-compositionality.pdf) as implemented in ```Spark NLP```:
 ```python
 def feature_extract(train_t):
     stopWords = spark_ft.StopWordsRemover.loadDefaultStopWords('english')
@@ -97,11 +96,12 @@ def feature_extract(train_t):
     ......
     return .... 
 ```
+<a name ="ah"/>
 
-An schematic of the model is:
+### -Keras model
+The Keras deep learning model has a [simaese recurrent](https://www.aaai.org/ocs/index.php/AAAI/AAAI16/paper/viewFile/12195/12023). This is a bi-lstm mode, where each input question is fed into a lastm model then the output from the two lstm are comapred using a exponential cpmarator. An schematic of the model architecture is:
 ![Image1](https://github.com/sazzad1012/NLP_Project/blob/master/Blstm.png)
-
-
+The model uses a binary cross-entrypy loss function and a logistic output, which gives the probbaility of whether a given question-pair is similar or dissimilar.
 ```python
 lstm = layers.LSTM(n_hidden, unit_forget_bias=True, kernel_initializer='he_normal',\
                             kernel_regularizer='l2', name='lstm_layer')
@@ -112,20 +112,16 @@ right_output = lstm(right_input)
 l1_norm = lambda x: 1 - K.abs(x[0] - x[1])
 merged = layers.Lambda(function=l1_norm, output_shape=lambda x: x[0], \
                                   name='L1_distance')([left_output, right_output])
-#predictions = layers.Dense(1, activation='sigmoid', name='Similarity_layer')(merged)
 predictions = layers.Dense(1, activation='relu', name='Similarity_layer')(merged)
 model = Model([left_input, right_input], predictions)
-
-optimizer = Adadelta()
-#optimizer = Adadelta(learning_rate=1.05, rho=0.85)
-#optimizer = Adam(lr=0.001)
-model.compile(loss = 'mse', optimizer = optimizer, metrics=['accuracy'])
-#model.compile(loss = tf.keras.losses.BinaryCrossentropy(), optimizer = optimizer, metrics=['accuracy'])
-history = model.fit([train_qA, train_qB], train_scores, batch_size=64, nb_epoch=15, validation_data=([val_qA, val_qB], val_scores))
-#model.save('/home/ubuntu/ML_NLP/test_result1.h5')
+.....
 ```
+The model is then serialized and saved a ```hdf``` file.
+<a name = "ai"/>
 
+## Deployment
 ```python
+
 app = Flask(__name__)
 @app.route('/')
 @app.route('/form-example', methods=['GET', 'POST']) #allow both GET and POST requests
@@ -153,4 +149,4 @@ def form_example():
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8000)
 ```
-
+```
