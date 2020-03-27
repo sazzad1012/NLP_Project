@@ -5,45 +5,51 @@
 * [Computing resources on AWS](#ac) 
   * [Software installation](#ae)
 * [Deep learning model](#af)
+  * [Model pipeline](#ag)
+  * [Keras model](#ah)
+* [Deployment](#ai)
+* [Conclusion](#aj)
 
 
 <a name = "ab"/>
 
 ## Introduction
-This document describes the principal steps necessary for building a production grade deep learning model and deploy it on the cloud, [Amazon Web Services](https://aws.amazon.com/). Our focus is on the necessary hardware and software infrastructures for model deployment on the cloud, rather than finessing on building a perfect model. 
+This document describes the principal steps necessary for building a deep learning model and deploying it on the cloud, [Amazon Web Services](https://aws.amazon.com/). Our focus is on provisioning the necessary hardware and software infrastructures for model deployment on the cloud. 
 
-The deep learning model is about inferring textual similarity such as comparing similarity between pairs of sentences as in Quora question-pairs [[Kaggle](https://www.kaggle.com/c/quora-question-pairs)]. 
+The deep learning model is about inferring textual similarity such as comparing sentences as in Quora question-pairs [[Kaggle](https://www.kaggle.com/c/quora-question-pairs)]. 
 
-The model utilizes [Apache Spark](https://spark.apache.org/) for handling big-data and [Spark-NLP](https://github.com/JohnSnowLabs/spark-nlp) from [John Snow Labs](https://www.johnsnowlabs.com/) for creating ML pipelines in order to extract the feature vectors. Finally, [Keras](https://keras.io/) with [TensorFlow](https://www.tensorflow.org/) as backend is used to build the model. 
+The model utilizes [Apache Spark](https://spark.apache.org/) for handling big-data and [Spark-NLP](https://github.com/JohnSnowLabs/spark-nlp) developed by [John Snow Labs](https://www.johnsnowlabs.com/) for creating the ML pipelines in order to extract the feature vectors. Finally, [Keras](https://keras.io/) with [TensorFlow](https://www.tensorflow.org/) as backend is used for building the model. 
 
 <a name ="ac"/>
 
 ## Computing resources on AWS
-The first step is provisoning for adequate cloud computing reosurces, for which an excellent choice is [AWS](https://aws.amazon.com/). Amazon Elastic Compute Cloud, [**Amazon EC2**](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Instances.html), provides secure, resizable compute capacity in the cloud. We created two linux-based ``Ubuntu 18.04`` EC2 instances following the excellent [documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html#ec2-launch-instance). We also used ``p3.2xlarge`` that has ``1 GPU``, ``32 vCPU``, ``64GB`` memeory with ``120GB`` storage capacity.  
+The first step is provisoning for adequate cloud computing reosurces, for which our choice is [AWS](https://aws.amazon.com/). Amazon Elastic Compute Cloud, [**Amazon EC2**](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Instances.html), provides secure, resizable compute capacity in the cloud. We created two linux-based ``Ubuntu 18.04`` EC2 instances following the excellent [documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html#ec2-launch-instance). We used ``t3.2xlarge`` that has ``8 vCPU``, ``64GB`` memeory with ``120GB`` storage capacity.  
  
 <a name ="ae"/>
 
 ### -Software installation
-First, we need to install Spark on each EC2 instance. Then, we will install the other spackages as described below.
+One of the trickst part is to setup the compute resurces with appropriate softwares. First, we need to install ```Spark``` on each EC2 instance and then we install the necessary ```Python``` packages as described below. 
+
+After, intsalling the necessary softwares, we used ```PyCharm``` profeesional edition from [JetBrains](https://www.jetbrains.com/pycharm/) with its remote-interpreter capability to connect with the EC2 intstances and for code development. 
+
 #### --Installation of Spark and Spark-NLP
-There are excellent online resources for installing Spoark on EC2 instances ([1](https://github.com/tkachuksergiy/aws-spark-nlp), [2](https://computingforgeeks.com/how-to-install-apache-spark-on-ubuntu-debian/), [3](https://blog.insightdatascience.com/simply-install-spark-cluster-mode-341843a52b88)). This requires installing ```Java```, downloading ```Spark 2.4.4```, settingup the master and the slave node. In our case, there is one master and one slave node, since we chose to have two E2 instances. One crucial step is updating the ```.bashrc``` configuration file:
+There are well-documented online resources for installing ```Spark``` on EC2 instances ([1](https://github.com/tkachuksergiy/aws-spark-nlp), [2](https://computingforgeeks.com/how-to-install-apache-spark-on-ubuntu-debian/), [3](https://blog.insightdatascience.com/simply-install-spark-cluster-mode-341843a52b88)). The basic step requires installing ```Java```, downloading ```Spark 2.4.4```, and setting-up the master and the slave node. In our case, there is one master and one slave node, since we chose to have two EC2 instances. One crucial step is updating the ```.bashrc``` configuration file:
 
 ```bash
 export SPARK_HOME=/usr/local/spark-2.3.2-bin-hadoop2.7
 export PATH=$PATH:$SPARK_HOME/bin
 export PYSPARK_PYTHON=python3
-. ~/.profile
-
-sudo chown -R ubuntu $SPARK_HOME
 ```
+
 Once ```Spark (PySpark)``` is properly installed, [Spark NLP 2.4.0]((https://github.com/JohnSnowLabs/spark-nlp)) needs to be installed using ```pip```- the ```Python``` package installer. 
 
 #### --Intsallation of Python packages
-Finally, we need to install ```Keras``` and ```TensorFlow```([4](https://www.pyimagesearch.com/2019/01/30/ubuntu-18-04-install-tensorflow-and-keras-for-deep-learning/)) along with ```Python``` packages such as ```NLTK```, ```NumPy```, and ```Pandas```. 
+Lastly, we need to install ```Keras``` and ```TensorFlow```([4](https://www.pyimagesearch.com/2019/01/30/ubuntu-18-04-install-tensorflow-and-keras-for-deep-learning/)) along with ```Python``` packages for natural language processing, qunatittaive data analyses and plotting such as ```NLTK```, ```NumPy```, ```Pandas```, ```Seaborn```. 
 
 <a name = "af"/>
 
 ## Deep learning model
+The NLP deep learning model for comapring question-pairs has two components. The first is about data-pipelining with feature extraction. The features after approproiate vectorization are fed into LSTM model the output of which are then used for model evaluation. The ```Spark``` nodes are appropriately set (in the example below the master node is set to local)to read the data-file:
 
 ```python
 spark = SparkSession.builder \
@@ -55,7 +61,7 @@ spark = SparkSession.builder \
  .getOrCreate()
 ```
 
-Then read the data file and split it into two dataframes for tarining and validation:
+Then, the dataframe, after reading the data file, is split into two dataframes for tarining and validation:
 
 ```python
 sql = SQLContext(spark)
@@ -63,46 +69,30 @@ dfgiven = sql.read.csv(f'{train_dir}{file_name}', header=True, inferSchema=True,
 df1,df2 = dfgiven.randomSplit([0.50, 0.50],seed=1234)
 ```
 
-Then write a helper function creating a dartapipeline for feature extraction.
+<a name ="ag"/>
+
+### -Model pipeline
+
+A helper function makes it easy for creating the data pipeline and extracting the features. First, the questions are tokenized and assembeld into a pipleine using Spark-NLP (see ```xxx.py```: 
+
 ```pyton
 def build_data(df):
     document_assembler1 = DocumentAssembler() \
         .setInputCol('question1').setOutputCol('document1')
-
     tokenizer1 = Tokenizer() \
         .setInputCols(['document1']) \
         .setOutputCol('token1')
-
     finisher1 = Finisher() \
         .setInputCols(['token1']) \
         .setOutputCols(['ntokens1']) \
         .setOutputAsArray(True) \
         .setCleanAnnotations(True)
-
-    document_assembler2 = DocumentAssembler() \
-        .setInputCol('question2').setOutputCol('document2')
-
-    tokenizer2 = Tokenizer() \
-        .setInputCols(['document2']) \
-        .setOutputCol('token2')
-
-    finisher2 = Finisher() \
-        .setInputCols(['token2']) \
-        .setOutputCols(['ntokens2']) \
-        .setOutputAsArray(True) \
-        .setCleanAnnotations(True)
-
+.......
+.......
     p_pipeline = Pipeline(stages=[document_assembler1, tokenizer1, finisher1, \
                                   document_assembler2, tokenizer2, finisher2])
-    p_model = p_pipeline.fit(df)
-    processed1 = p_model.transform(df)
-    label1 = processed1.select('is_duplicate').collect()
-    label_array1 = np.array(label1)
-    label_array1 = label_array1.astype(np.int)
-
-    return processed1, label_array1
+    return ...
 ```
-
 Then extracting the features:
 <div class="text-white bg-gray-dark mb-2">
 ```python
