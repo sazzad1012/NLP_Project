@@ -12,7 +12,7 @@
 
 <a name = "ab"/>
 
-## Introduction
+## * Introduction
 This document describes the principal steps necessary for building a deep learning model and deploying it on the cloud, [Amazon Web Services](https://aws.amazon.com/). Our focus is on provisioning the necessary hardware and software infrastructures for model deployment on the cloud. 
 
 The deep learning model is about inferring textual similarity such as comparing sentences as in Quora question-pairs [[Kaggle](https://www.kaggle.com/c/quora-question-pairs)]. 
@@ -20,11 +20,11 @@ The deep learning model is about inferring textual similarity such as comparing 
 The model utilizes [Apache Spark](https://spark.apache.org/) for handling big-data and [Spark-NLP](https://github.com/JohnSnowLabs/spark-nlp) developed by [John Snow Labs](https://www.johnsnowlabs.com/) for creating the ML pipelines in order to extract the feature vectors. Finally, [Keras](https://keras.io/) with [TensorFlow](https://www.tensorflow.org/) as backend is used for building the model. 
 <a name ="ac"/>
 
-## Computing resources on AWS
+## * Computing resources on AWS
 The first step is provisoning for adequate cloud computing reosurces, for which our choice is [AWS](https://aws.amazon.com/). Amazon Elastic Compute Cloud, [**Amazon EC2**](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Instances.html), provides secure, resizable compute capacity in the cloud. We created two linux-based ``Ubuntu 18.04`` EC2 instances following the excellent [documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html#ec2-launch-instance). We used ``t3.2xlarge`` that has ``8 vCPU``, ``64GB`` memeory with ``120GB`` storage capacity.  
 <a name ="ae"/>
 
-### -Software installation
+### * Software installation
 One of the trickst part is to setup the compute resurces with appropriate softwares. First, we need to install ```Spark``` on each EC2 instance and then we install the necessary ```Python``` packages as described below. 
 
 After, intsalling the necessary softwares, we used ```PyCharm``` profeesional edition from [JetBrains](https://www.jetbrains.com/pycharm/) with its remote-interpreter capability to connect with the EC2 intstances and for code development. 
@@ -42,7 +42,7 @@ Once ```Spark (PySpark)``` is properly installed, [Spark NLP 2.4.0]((https://git
 Lastly, we need to install ```Keras``` and ```TensorFlow```([4](https://www.pyimagesearch.com/2019/01/30/ubuntu-18-04-install-tensorflow-and-keras-for-deep-learning/)) along with ```Python``` packages for natural language processing, qunatittaive data analyses and plotting such as ```NLTK```, ```NumPy```, ```Pandas```, ```Seaborn```. 
 <a name = "af"/>
 
-## Deep learning model
+## * Deep learning model
 The NLP deep learning model for comapring question-pairs has two components. The first is about data-pipelining with feature extraction. The features after approproiate vectorization are fed into a LSTM model the output of which are then used for model evaluation. The ```Spark``` nodes are appropriately set (in the example below the master node is set to local) to read the data-file:
 ```python
 spark = SparkSession.builder \
@@ -61,7 +61,7 @@ df1,df2 = dfgiven.randomSplit([0.50, 0.50],seed=1234)
 ```
 <a name ="ag"/>
 
-### -Model pipeline
+### * Model pipeline
 A helper function makes it easy for creating the data pipeline and extracting the features. First, the questions are tokenized and assembeld into a pipleine using Spark-NLP (see ```xxx.py```): 
 ```pyton
 def build_data(df):
@@ -98,7 +98,7 @@ def feature_extract(train_t):
 ```
 <a name ="ah"/>
 
-### -Keras model
+### * Keras model
 The Keras deep learning model has a [simaese recurrent](https://www.aaai.org/ocs/index.php/AAAI/AAAI16/paper/viewFile/12195/12023). This is a bi-lstm mode, where each input question is fed into a lastm model then the output from the two lstm are comapred using a exponential cpmarator. An schematic of the model architecture is:
 
 ![Image1](https://github.com/sazzad1012/NLP_Project/blob/master/Blstm.png)
@@ -121,7 +121,9 @@ model = Model([left_input, right_input], predictions)
 The model is then serialized and saved as a ```hdf``` file.
 <a name = "ai"/>
 
-## Deployment
+## * Deployment
+The model is deployed with a ```Flask``` web application that interfaces with ```Nginx``` web-server. The technology stack is depicted as follows:
+
 ```python
 
 app = Flask(__name__)
