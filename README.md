@@ -100,7 +100,9 @@ def feature_extract(train_t):
 
 ### -Keras model
 The Keras deep learning model has a [simaese recurrent](https://www.aaai.org/ocs/index.php/AAAI/AAAI16/paper/viewFile/12195/12023). This is a bi-lstm mode, where each input question is fed into a lastm model then the output from the two lstm are comapred using a exponential cpmarator. An schematic of the model architecture is:
+
 ![Image1](https://github.com/sazzad1012/NLP_Project/blob/master/Blstm.png)
+
 The model uses a binary cross-entrypy loss function and a logistic output, which gives the probbaility of whether a given question-pair is similar or dissimilar.
 ```python
 lstm = layers.LSTM(n_hidden, unit_forget_bias=True, kernel_initializer='he_normal',\
@@ -116,7 +118,7 @@ predictions = layers.Dense(1, activation='relu', name='Similarity_layer')(merged
 model = Model([left_input, right_input], predictions)
 .....
 ```
-The model is then serialized and saved a ```hdf``` file.
+The model is then serialized and saved as a ```hdf``` file.
 <a name = "ai"/>
 
 ## Deployment
