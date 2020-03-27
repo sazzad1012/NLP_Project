@@ -128,7 +128,7 @@ The model is deployed with a ```Flask``` web application that interfaces with ``
 
 Here, ```Gunicorn``` is a ```Python``` based ```WSGI http``` server that interfaces between ```Flask``` and ```Nginx.``` We followed two excellent tutorials [4](https://medium.com/hackernoon/a-guide-to-scaling-machine-learning-models-in-production-aa8831163846) and [5](https://www.jashds.com/blog/host-your-deep-learning-model-on-aws-free). After downloading and setting up ```Nginx``` and ```Gunicorn```, a ```Flask``` application is writtent. Finally, the ```systemmd``` service needs to be properly configured to ensure smooth running of the web application.
 
-Below is the ```Flask``` application: 
+Below is the ```Flask``` application (see ```zzz.py```): 
 ```python
 app = Flask(__name__)
 @app.route('/')
