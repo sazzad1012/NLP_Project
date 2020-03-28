@@ -1,21 +1,16 @@
+#Import packages
 import os
 import sys
 import string
 import pandas as pd
 import numpy as np
 import pandas as pd
-
-train_dir = '/home/ubuntu/ML_NLP/'
-file_name ='train.csv'
-
 import pyspark
 import sparknlp
-
 from sparknlp import *
 from sparknlp.annotator import Lemmatizer, Stemmer, Tokenizer, Normalizer
 from sparknlp.base import DocumentAssembler, Finisher
 from sparknlp.embeddings import *
-
 from pyspark import SparkContext, SparkConf
 from pyspark.sql import SQLContext
 from pyspark.sql import SparkSession
@@ -23,6 +18,11 @@ from pyspark.ml import Pipeline
 from pyspark.ml.feature import Word2Vec
 from pyspark.ml import feature as spark_ft
 
+#Data path and file name
+train_dir = 'Path_to_training_data/'
+file_name ='train1.csv'
+
+#Create Spark session
 spark = SparkSession.builder \
  .master('local[4]') \
  .appName('Spark NLP') \
@@ -31,14 +31,16 @@ spark = SparkSession.builder \
  .config('spark.jars.packages', 'JohnSnowLabs:spark-nlp:2.4.0') \
  .getOrCreate()
 
+#Read data file
 sql = SQLContext(spark)
 dfgiven = sql.read.csv(f'{train_dir}{file_name}', header=True, inferSchema=True, escape = '\"')
-df1,df2 = dfgiven.randomSplit([0.50, 0.50],seed=1234)
-df1 = sql.createDataFrame(df1.head(5000), df1.schema)
+df1,df2 = dfgiven.randomSplit([0.50, 0.50],seed=1234) #training and validation set
+df1 = sql.createDataFrame(df1.head(500), df1.schema)#Just taking the 1st 500 samples
 df1 = df1.na.drop()
-df2 = sql.createDataFrame(df2.head(5000), df2.schema)
+df2 = sql.createDataFrame(df2.head(500), df2.schema)
 df2 = df2.na.drop()
 
+#Helper function for tokenizing the text using Spark-NLP (in this case two question columns: Question 1 & Question 2)
 def build_data(df):
     document_assembler1 = DocumentAssembler() \
         .setInputCol('question1').setOutputCol('document1')
@@ -75,8 +77,8 @@ def build_data(df):
     label_array1 = label_array1.astype(np.int)
 
     return processed1, label_array1
-    #return processed1, label_array1, processed1
 
+#Helper function for feature extraction and vecotorization using word2vec (Spark-NLP)
 def feature_extract(train_t):
     stopWords = spark_ft.StopWordsRemover.loadDefaultStopWords('english')
 
@@ -109,23 +111,17 @@ def feature_extract(train_t):
     tB_array = np.array(tB)
 
     return tA_array, tB_array
-    #return tA_array, tB_array, train_featurized
-
+    
+#Now convert the training and validation data into vectors that can be used to inpiut for the DL model
 train, train_scores = build_data(df1)
 val, val_scores = build_data(df2)
 train_qA, train_qB = feature_extract(train)
 val_qA, val_qB = feature_extract(val)
 
-#train, train_scores = build_data(df1)
-#val, val_scores = build_data(df2)
-#train_qA, train_qB, train_features_df_qA = feature_extract(train)
-#val_qA, val_qB, val_features_df = feature_extract(val)
-
-import keras
+#Keras & TensorFlow imports
 from keras.layers import concatenate
 from keras.preprocessing.sequence import pad_sequences
 from keras.callbacks import EarlyStopping
-import tensorflow
 from tensorflow.keras import layers
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Embedding, Flatten, Dense, LSTM, Lambda
@@ -137,13 +133,13 @@ import tensorflow.keras.backend as K
 import tensorflow.compat.v1 as tf
 tf.disable_v2_behavior()
 import matplotlib.pyplot as plt
-import elephas
-from elephas.ml_model import ElephasEstimator
 
+#Keras hyperparameters
 input_dim = 50
 h_units = 100
 n_hidden = 50
 
+#Create lstm layers, one for each question 
 lstm = layers.LSTM(n_hidden, unit_forget_bias=True, kernel_initializer='he_normal',\
                             kernel_regularizer='l2', name='lstm_layer')
 left_input = Input(shape=(None, input_dim), name='input_1')
@@ -153,42 +149,14 @@ right_output = lstm(right_input)
 l1_norm = lambda x: 1 - K.abs(x[0] - x[1])
 merged = layers.Lambda(function=l1_norm, output_shape=lambda x: x[0], \
                                   name='L1_distance')([left_output, right_output])
-#predictions = layers.Dense(1, activation='sigmoid', name='Similarity_layer')(merged)
-predictions = layers.Dense(1, activation='relu', name='Similarity_layer')(merged)
+predictions = layers.Dense(1, activation='sigmoid', name='Similarity_layer')(merged)
+#Two lstm layers ar merged before making the prediction
 model = Model([left_input, right_input], predictions)
-
 optimizer = Adadelta()
-#optimizer = Adadelta(learning_rate=1.05, rho=0.85)
-#optimizer = Adam(lr=0.001)
-model.compile(loss = 'mse', optimizer = optimizer, metrics=['accuracy'])
-#model.compile(loss = tf.keras.losses.BinaryCrossentropy(), optimizer = optimizer, metrics=['accuracy'])
+
+#Model compilation and etc...
+model.compile(loss = tf.keras.losses.BinaryCrossentropy(), optimizer = optimizer, metrics=['accuracy'])
 history = model.fit([train_qA, train_qB], train_scores, batch_size=64, nb_epoch=15, validation_data=([val_qA, val_qB], val_scores))
-#model.save('/home/ubuntu/ML_NLP/test_result1.h5')
 
-#####NEW ELEPHAS #####
-
-#train_features_df_qA.show()
-#optimizer_conf = optimizers.Adadelta()
-#opt_conf = optimizers.serialize(optimizer_conf)
-
-#model.compile
-#nb_classes = 2
-#estimator = ElephasEstimator()
-#estimator.setFeaturesCol('text_vec1')
-#estimator.setFeaturesCol('text_vec2')
-#estimator.setLabelCol('is_duplicate')
-#estimator.set_keras_model_config(model.to_json())
-#estimator.set_categorical_labels(True)
-#estimator.set_nb_classes(nb_classes)
-#estimator.set_num_workers(1)
-#estimator.set_epochs(5)
-#estimator.set_batch_size(64)
-#estimator.set_verbosity(1)
-#estimator.set_validation_split(0.10)
-#estimator.set_optimizer_config(opt_conf)
-#estimator.set_mode('synchronous')
-#estimator.set_loss('mse')
-#estimator.set_metrics(['acc'])
-
-#import systemml
-#from systemml.mllearn import Keras2DML
+#Saving the model
+model.save('path_to_save_folder/test_result1.h5')
