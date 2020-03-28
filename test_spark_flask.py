@@ -20,8 +20,10 @@ from pyspark.ml import Pipeline
 from pyspark.ml.feature import Word2Vec
 from pyspark.ml import feature as spark_ft
 
+#Directory where the model is saved
 model_dir = '/home/ubuntu/ML_NLP/'
 
+#Create Spark session
 spark = SparkSession.builder \
  .master('local[1]') \
  .appName('Spark NLP') \
@@ -49,9 +51,10 @@ import tensorflow.compat.v1 as tf
 tf.disable_v2_behavior()
 import matplotlib.pyplot as plt
 
-#new_model = load_model('/home/ubuntu/ML_NLP/test_result.h5')
+#Load the model
 new_model = load_model(os.path.join(model_dir, 'test_result.h5'))
 
+#Data pipeline tokenizing the input questions
 def build_data(df):
     document_assembler1 = DocumentAssembler() \
         .setInputCol('question1').setOutputCol('document1')
@@ -85,8 +88,8 @@ def build_data(df):
     processed1 = p_model.transform(df)
 
     return processed1
-    #return processed1, label_array1, processed1
 
+# Feature extraction
 def feature_extract(train_t):
     stopWords = spark_ft.StopWordsRemover.loadDefaultStopWords('english')
 
@@ -119,8 +122,8 @@ def feature_extract(train_t):
     tB_array = np.array(tB)
 
     return tA_array, tB_array
-    #return tA_array, tB_array, train_featurized
-
+   
+#Flask app
 app = Flask(__name__)
 @app.route('/')
 @app.route('/form-example', methods=['GET', 'POST']) #allow both GET and POST requests
@@ -128,110 +131,20 @@ def form_example():
     if request.method == 'POST':  #this block is only entered when the form is submitted
         texta = request.form.get('texta')
         textb = request.form['textb']
-
+#Read the inputs for further processing before feeding into the model input
         test_list = [(texta, textb)]
         dfgiven = sql.createDataFrame(test_list, ['question1', 'question2'])
         test = build_data(dfgiven)
         test_qA, test_qB = feature_extract(test)
         new_prediction = new_model.predict([test_qA,test_qB])
-#        return 'hello'
-        return print(new_prediction)
-#        return jsonify(str(new_prediction))
-#        return '''<h1>The language value is: {}</h1>'''.format(texta)
-#                  <h1>The framework value is: {}</h1>'''.format(texta, textb)
+        return jsonify(str(new_prediction))
 
     return '''<form method="POST">
                   Question1: <input type="text" name="texta"><br>
                   Question2: <input type="text" name="textb"><br>
                   <input type="submit" value="Submit"><br>
               </form>'''
-
-
-
-#@app.route('/predict', methods=['GET'])
-#@app.route('/predict', methods=['GET', 'POST'])
-#def predict():
-#        texta = request.args.get('text1')
-#        textb = request.args.get('text2')
-
-#        texta ='a bbb dog'
-#        textb = 'a dog'
-#        if request.method == 'POST':
-#            texta = request.form.get('texta')
-#            textb = request.form.get('terxtb')
-
-#            test_list = [(texta, textb)]
-#            dfgiven = sql.createDataFrame(test_list, ['question1', 'question2'])
-#            test = build_data(dfgiven)
-#            test_qA, test_qB = feature_extract(test)
-#            new_prediction = new_model.predict([test_qA,test_qB])
-#        return print(new_prediction)
-#        return jsonify({'prediction': str(new_prediction)})
-#            return 'hello world'
-#        return jsonify(str(new_prediction))
-#            return '''<h1>The language value is: {}</h1>'''.form(texta)
-
-#    if request.method == 'POST':  #this block is only entered when the form is submitted
-#        language = request.form.get('texta')
-#        framework = request.form['textb']
-
-#        return '''<h1>The language value is: {}</h1>
-#                  <h1>The framework value is: {}</h1>'''.format(texta, textb)
-
-#    return '''<form method="POST">
-#                Question1: <input type="text" name="texta"><br>
-#                Question2: <input type="text" name="textb"><br>
-#                <input type="submit" value="Submit"><br>
-#              </form>'''
-
+   
 if __name__ == "__main__":
-#    app.run(host='127.0.0.1', port=8000)
-    app.run(host='0.0.0.0', threaded=True)
-
-
-
-
-
-
-#dfgiven.show()
-#cSchema = StructType([StructField('question1', StringType(), True)\
-#                      ,StructField('question2', StringType(),True)])
-#dfgiven = spark.createDataFrame(test_list,schema=cSchema)
-#dfgiven = sql.read.csv(f'{train_dir}{file_name}', header=True, inferSchema=True, escape = '\"')
-#df1,df2 = dfgiven.randomSplit([0.50, 0.50],seed=1234)
-#df1 = sql.createDataFrame(df1.head(500), df1.schema)
-#df1 = df1.na.drop()
-#df2 = sql.createDataFrame(df2.head(500), df2.schema)
-#df2 = df2.na.drop()
-
-#text1 = 'a cat is a dog'
-#text2 = 'a cat is not a dog'
-
-#test_list = [(text1, text2)]
-#dfgiven = sql.createDataFrame(test_list, ['question1', 'question2'])
-
-#    label1 = processed1.select('is_duplicate').collect()
-#    label_array1 = np.array(label1)
-#    label_array1 = label_array1.astype(np.int)
-
-#input_dim = 50
-#h_units = 100
-#n_hidden = 50
-
-#lstm = layers.LSTM(n_hidden, unit_forget_bias=True, kernel_initializer='he_normal',\
-#                            kernel_regularizer='l2', name='lstm_layer')
-#left_input = Input(shape=(None, input_dim), name='input_1')
-#left_output = lstm(left_input)
-#right_input = Input(shape=(None, input_dim), name='input_2')
-#right_output = lstm(right_input)
-#l1_norm = lambda x: 1 - K.abs(x[0] - x[1])
-#merged = layers.Lambda(function=l1_norm, output_shape=lambda x: x[0], \
-#                                  name='L1_distance')([left_output, right_output])
-#predictions = layers.Dense(1, activation='sigmoid', name='Similarity_layer')(merged)
-#model = Model([left_input, right_input], predictions)
-
-#optimizer = Adadelta()
-#model.compile(loss = 'mse', optimizer = optimizer, metrics=['accuracy'])
-#history = model.fit([train_qA, train_qB], train_scores, batch_size=64, nb_epoch=5, validation_data=([val_qA, val_qB], val_scores))
-
-#model.save('/home/ubuntu/ML_NLP/test_result.h5')
+    app.run(host='127.0.0.1', port=8000)
+    
