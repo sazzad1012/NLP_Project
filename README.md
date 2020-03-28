@@ -66,7 +66,7 @@ df1,df2 = dfgiven.randomSplit([0.50, 0.50],seed=1234)
 <a name ="ag"/>
 
 ### 3a. Model pipeline
-A helper function makes it easy for creating the data pipeline and extracting the features. First, the questions are tokenized and assembeld into a pipleine using Spark-NLP (see ```xxx.py```): 
+A helper function makes it easy for creating the data pipeline and extracting the features. First, the questions are tokenized and assembeld into a pipleine using Spark-NLP (see ```speak_n.py```): 
 ```pyton
 def build_data(df):
     document_assembler1 = DocumentAssembler() \
@@ -84,7 +84,7 @@ def build_data(df):
                                   document_assembler2, tokenizer2, finisher2])
     return ...
 ```
-For extracting the features, first stop-words are removed and then the word-tokens are converted into feature vectors (see ```yyy.py```)  using [Word2Vec](https://papers.nips.cc/paper/5021-distributed-representations-of-words-and-phrases-and-their-compositionality.pdf) as implemented in ```Spark NLP```:
+For extracting the features, first stop-words are removed and then the word-tokens are converted into feature vectors (see ```spark_n.py```)  using [Word2Vec](https://papers.nips.cc/paper/5021-distributed-representations-of-words-and-phrases-and-their-compositionality.pdf) as implemented in ```Spark NLP```:
 ```python
 def feature_extract(train_t):
     stopWords = spark_ft.StopWordsRemover.loadDefaultStopWords('english')
@@ -140,7 +140,7 @@ The model is deployed with a ```Flask``` web application that interfaces with ``
 
 Here, ```Gunicorn``` is a ```Python``` based ```WSGI http``` server that interfaces between ```Flask``` and ```Nginx.``` We followed two excellent tutorials [4](https://medium.com/hackernoon/a-guide-to-scaling-machine-learning-models-in-production-aa8831163846) and [5](https://www.jashds.com/blog/host-your-deep-learning-model-on-aws-free). After downloading and setting up ```Nginx``` and ```Gunicorn```, a ```Flask``` application is writtent. Finally, the ```systemmd``` service needs to be properly configured to ensure smooth running of the web application.
 
-Below is the ```Flask``` application (see ```zzz.py```): 
+Below is the ```Flask``` application (see ```test_spark_flask.py```): 
 ```python
 app = Flask(__name__)
 @app.route('/')
