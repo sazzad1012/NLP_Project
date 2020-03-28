@@ -165,7 +165,15 @@ def form_example():
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8000)
 ```
-Upon enetering two query questions, the program spits out a result:
+The flask app is run followig:
+```bash
+guncorn --bind 127.0.0.1:5000 flask_app:app
+```
+Upon enetering two query questions at ```http:EC2 IP:5000/```, the program spits out a prediction as follows:
 
 ![Image4](https://github.com/sazzad1012/NLP_Project/blob/master/Predict1.png)
 
+<a name = "aj"/>
+
+## 5. Conclusion
+We have presented a step-by-step guide for building and deploying a deep learning NLP model on AWS EC2 instances. It is also possible (though not pursued here) to create a ```Docker``` image of the model and then register with ```AWS EMR``` (elastic container registry) and then deploy it using ```Sagemaker``` and ```REST API```. 
