@@ -167,5 +167,5 @@ if __name__ == "__main__":
 ```
 Upon enetering two query questions, the program spits out a result:
 
-![Image4](https://github.com/sazzad1012/NLP_Project/blob/master/Predict.png)
+![Image4](https://github.com/sazzad1012/NLP_Project/blob/master/Predict1.png)
 
