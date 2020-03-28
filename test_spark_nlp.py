@@ -1,3 +1,4 @@
+## import necessary packages
 import os
 import sys
 import string
@@ -5,8 +6,9 @@ import pandas as pd
 import numpy as np
 import pandas as pd
 
+#Data directory
 train_dir = '/home/ubuntu/ML_NLP/'
-file_name ='train.csv'
+file_name ='train1.csv'
 
 import pyspark
 import sparknlp
