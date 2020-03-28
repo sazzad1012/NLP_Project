@@ -32,9 +32,13 @@ After, intsalling the necessary softwares, we used ```PyCharm``` profeesional ed
 #### --Installation of Spark and Spark-NLP
 There are well-documented online resources for installing ```Spark``` on EC2 instances ([1](https://github.com/tkachuksergiy/aws-spark-nlp), [2](https://computingforgeeks.com/how-to-install-apache-spark-on-ubuntu-debian/), [3](https://blog.insightdatascience.com/simply-install-spark-cluster-mode-341843a52b88)). The basic step requires installing ```Java```, downloading ```Spark 2.4.4```, and setting-up the master and the slave node. In our case, there is one master and one slave node, since we chose to have two EC2 instances. One crucial step is updating the ```.bashrc``` configuration file:
 ```bash
-export SPARK_HOME=/usr/local/spark-2.3.2-bin-hadoop2.7
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+export JRE_HOME=$JAVA_HOME/jre
+export PATH=$PATH:$JAVA_HOME/bin:$JAVA_HOME/jre/bin
+export SPARK_HOME=/usr/local/spark-2.4.0-bin-hadoop2.7
 export PATH=$PATH:$SPARK_HOME/bin
 export PYSPARK_PYTHON=python3
+export SYSTEMML_HOME=/usr/local/systemml-1.2.0-bin
 ```
 Once ```Spark (PySpark)``` is properly installed, [Spark NLP 2.4.0]((https://github.com/JohnSnowLabs/spark-nlp)) needs to be installed using ```pip```- the ```Python``` package installer. 
 
