@@ -165,3 +165,7 @@ def form_example():
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8000)
 ```
+Upon enetering two query questions, the program spits out a result:
+
+![Image4](https://github.com/sazzad1012/NLP_Project/blob/master/Predict.png)
+
