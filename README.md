@@ -118,6 +118,10 @@ predictions = layers.Dense(1, activation='relu', name='Similarity_layer')(merged
 model = Model([left_input, right_input], predictions)
 .....
 ```
+Here is the model summary:
+
+![Image1](https://github.com/sazzad1012/NLP_Project/blob/master/ModelSummary1.png)
+
 The model is then serialized and saved as a ```hdf``` file.
 <a name = "ai"/>
 
