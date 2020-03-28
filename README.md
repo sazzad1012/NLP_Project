@@ -120,7 +120,11 @@ model = Model([left_input, right_input], predictions)
 ```
 Here is the model summary:
 
-![Image1](https://github.com/sazzad1012/NLP_Project/blob/master/ModelSummary1.png)
+![Image3](https://github.com/sazzad1012/NLP_Project/blob/master/ModelSummary1.png)
+
+The model accuracy on the validation data set is:
+
+![Image4](https://github.com/sazzad1012/NLP_Project/blob/master/Acc.png)
 
 The model is then serialized and saved as a ```hdf``` file.
 <a name = "ai"/>
