@@ -1,4 +1,4 @@
-# Building and Deploying a Spark ML Model on the Cloud
+# Building and Deploying a Deep Learning Spark-NLP Model on the Cloud
 ## Table of Contents  
 
 * [Introudction](#ab)  
