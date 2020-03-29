@@ -21,7 +21,7 @@ from pyspark.ml.feature import Word2Vec
 from pyspark.ml import feature as spark_ft
 
 #Directory where the model is saved
-model_dir = '/home/ubuntu/ML_NLP/'
+model_dir = '/home/ubuntu/...../'
 
 #Create Spark session
 spark = SparkSession.builder \
@@ -136,8 +136,14 @@ def form_example():
         dfgiven = sql.createDataFrame(test_list, ['question1', 'question2'])
         test = build_data(dfgiven)
         test_qA, test_qB = feature_extract(test)
+ # Load the model
+        new_model = load_model(os.path.join(model_dir, 'test_result.h5'))
         new_prediction = new_model.predict([test_qA,test_qB])
-        return jsonify(str(new_prediction))
+        if new_prediction >0.5:
+            res = 'Yes'
+        else:
+            res = 'No'
+        return '''<h1>Do the questions have similar meaning?  {}</h1>'''.format(res)
 
     return '''<form method="POST">
                   Question1: <input type="text" name="texta"><br>
@@ -146,5 +152,5 @@ def form_example():
               </form>'''
    
 if __name__ == "__main__":
-    app.run(host='127.0.0.1', port=8000)
+    app.run(host='127.0.0.1', port=5000)
     
